@@ -1,5 +1,6 @@
 package com.goody.omok;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 class omok{
 
@@ -338,16 +339,56 @@ class omok{
         return count;
     }
 
+    public boolean check_enmpty_stone(int pos){
+
+        int pos_x = pos % 15;
+        int pos_y = pos / 15;
+
+        int[][] dist_list = {
+                {1,1},{1,-1},{-1,-1},{-1,1},{1,0},{-1,0},{0,-1},{0,-1}
+        };
+
+        for(int i = 0; i < 8; i++){
+            int dx = dist_list[i][0];
+            int dy = dist_list[i][1];
+            int dist_pos_x = pos_x;
+            int dist_pos_y = pos_y;
+            for(int j = 0; j < 2; j++){
+                dist_pos_x += dx;
+                dist_pos_y += dy;
+                if(dist_pos_x < 0 || dist_pos_x > 14 || dist_pos_y < 0 || dist_pos_y > 14){
+                    break;
+                }
+
+                if(this.pieces[dist_pos_x + (dist_pos_y * 15)] == 1 ||
+                    this.enemy_pieces[dist_pos_x + (dist_pos_y * 15)] == 1){
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public ArrayList<Integer> smart_legal_actions(){
 
         ArrayList<Integer> actions = new ArrayList<Integer>();
         ArrayList<Integer> default_legal_actions = this.legal_actions();
+        ArrayList<Integer> remove_object = new ArrayList<Integer>();
+        for(int i = 0; i < default_legal_actions.size(); i++) {
+            if(check_enmpty_stone(default_legal_actions.get(i))){
+                remove_object.add(default_legal_actions.get(i));
+            }
+        }
+        for(int i = 0; i < remove_object.size(); i++){
+            default_legal_actions.remove(remove_object.get(i));
+        }
 
         int dist_list[][] = {
                 {1, 0, -1, 0},
                 {0, 1, 0, -1},
                 {1, 1, -1, -1},
-                {1, 1, -1, 1}
+                {1, -1, -1, 1}
         };
 
         // 내가 5목을 만들 수 있는 상황이면 반드시 승리를 쟁취한다.
@@ -533,6 +574,28 @@ class omok{
             else{
                 if(this.pieces[i] == 0 && this.enemy_pieces[i] == 0){
                     actions.add(i);
+                }
+            }
+        }
+
+        return actions;
+    }
+
+    public ArrayList<Integer> envalue_actions(){
+        ArrayList<Integer> actions = new ArrayList<Integer>();
+        for(int i = 0; i < 225; i++){
+            if(this.is_first_player()){
+                if(this.pieces[i] == 0 && this.enemy_pieces[i] == 0){
+                    int[] temp_pieces = this.pieces.clone();
+                    temp_pieces[i] = 1;
+
+                    int open_three_count = check_line_type_open_three(temp_pieces,enemy_pieces,i);
+                    int close_four_count = check_line_type_close_four(temp_pieces,enemy_pieces,i);
+                    int open_four_count = check_line_type_open_three(temp_pieces,enemy_pieces,i);
+
+                    if(open_three_count >= 2 || close_four_count + open_four_count >= 2){
+                        actions.add(i);
+                    }
                 }
             }
         }

@@ -44,13 +44,8 @@ public class FullscreenActivity extends AppCompatActivity {
     public CardView spalshdown_card = null;
     public boolean is_human_turn = false;
 
-    public int level_button_index = 0;
     public int turn_select_button_index = 0;
     public int gameState = 0;   //  0 : ready_game, 1 : playing_game
-
-    public Button level_1_button;
-    public Button level_2_button;
-    public Button level_3_button;
 
     public Button turn_first_button;
     public Button turn_second_button;
@@ -91,10 +86,6 @@ public class FullscreenActivity extends AppCompatActivity {
             ArrayList<Integer> scores = Node.nodes_to_scores(root_node.child_nodes);
             ArrayList<Integer> legal_actions = state.smart_legal_actions();
 
-            if(scores.size() > 10){
-                scores.set(0,0);
-            }
-
             if(Node.integer_array_list_sum(scores) == 0){
                 continue;
             }
@@ -110,17 +101,10 @@ public class FullscreenActivity extends AppCompatActivity {
         protected Integer doInBackground(Void... voids) {
 
             int index = 0;
-
-            switch(level_button_index){
-                case 0:
-                    index = predict_mcts();
-                    break;
-                case 1:
-                    index = predict_mcts();
-                    break;
-                case 2:
-                    index = predict_mcts();
-                    break;
+            if(state.piece_count(state.pieces) + state.piece_count(state.enemy_pieces) == 0){
+                index = 112;
+            }else{
+                index = predict_mcts();
             }
 
             state = state.next(index);
@@ -156,10 +140,34 @@ public class FullscreenActivity extends AppCompatActivity {
                 game_state_textview.setText("당신의 턴 진행중...");
                 is_human_turn = true;
             }
+
+            if(state.is_done()){
+                game_state_textview.setText("AI의 승리!");
+
+                game_start_button.setBackgroundColor(getResources().getColor(R.color.colorThirdLabel));
+                game_start_button.setText("게임 시작");
+                gameState = 0;
+            }
+
+            ArrayList<Integer> unvalue_action = state.envalue_actions();
+            for(int i = 0; i < unvalue_action.size(); i++){
+                CardView red_card = stone_card_list.get(unvalue_action.get(i));
+                FrameLayout cardFrame =
+                        (FrameLayout)red_card.getChildAt(0);
+                cardFrame.setBackgroundColor(0x88FF0000);
+                red_card.setAlpha(1);
+            }
         }
     }
 
     public void turn_of_human(int index){
+
+        ArrayList<Integer> unvalue_action = state.envalue_actions();
+        for(int i = 0; i < unvalue_action.size(); i++){
+            CardView red_card = stone_card_list.get(unvalue_action.get(i));
+            red_card.setAlpha(0);
+        }
+
         state = state.next(index);
         if(turn_select_button_index == 0) {
             spalshdown_card.getChildAt(0).setBackgroundColor(0xFF424242);   // 흑
@@ -167,7 +175,6 @@ public class FullscreenActivity extends AppCompatActivity {
             spalshdown_card.getChildAt(0).setBackgroundColor(0xFFFAF6F6);
         }
         spalshdown_card = null;
-
         splashdown_button.setBackgroundColor(getResources().getColor(R.color.colorThirdLabel));
 
         if(state.is_done()){
@@ -189,14 +196,6 @@ public class FullscreenActivity extends AppCompatActivity {
 
     public void turn_of_ai(){
         new AI_Task().execute();
-
-        if(state.is_done()){
-            game_state_textview.setText("AI의 승리!");
-
-            game_start_button.setBackgroundColor(getResources().getColor(R.color.colorThirdLabel));
-            game_start_button.setText("게임 시작");
-            gameState = 0;
-        }
     }
 
     public void start_game(){
@@ -236,45 +235,6 @@ public class FullscreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fullscreen);
 
         activity = this;
-
-        level_1_button = findViewById(R.id.level_1_button);
-        level_2_button = findViewById(R.id.level_2_button);
-        level_3_button = findViewById(R.id.level_3_button);
-
-        // 게임난이도 선택 UI
-        level_1_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(level_button_index != 0 && gameState == 0){
-                    level_button_index = 0;
-                    level_1_button.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                    level_2_button.setBackgroundColor(getResources().getColor(R.color.colorThirdLabel));
-                    level_3_button.setBackgroundColor(getResources().getColor(R.color.colorThirdLabel));
-                }
-            }
-        });
-        level_2_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(level_button_index != 1 && gameState == 0){
-                    level_button_index = 1;
-                    level_1_button.setBackgroundColor(getResources().getColor(R.color.colorThirdLabel));
-                    level_2_button.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                    level_3_button.setBackgroundColor(getResources().getColor(R.color.colorThirdLabel));
-                }
-            }
-        });
-        level_3_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(level_button_index != 2 && gameState == 0){
-                    level_button_index = 2;
-                    level_1_button.setBackgroundColor(getResources().getColor(R.color.colorThirdLabel));
-                    level_2_button.setBackgroundColor(getResources().getColor(R.color.colorThirdLabel));
-                    level_3_button.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-                }
-            }
-        });
 
         // 선후공 결정 선택 UI
         turn_first_button = findViewById(R.id.turn_first_button);
@@ -364,7 +324,7 @@ public class FullscreenActivity extends AppCompatActivity {
                         if(v.getAlpha() == 0 && legal_actions.contains(finalI)){
                             FrameLayout cardFrame =
                                     (FrameLayout)stone_card_list.get(finalI).getChildAt(0);
-                            cardFrame.setBackgroundColor(0x807C7C7C);
+                            cardFrame.setBackgroundColor(0x80CCCCCC);
                             v.setAlpha(1);
                             if(spalshdown_card != null) {
                                 spalshdown_card.setAlpha(0);

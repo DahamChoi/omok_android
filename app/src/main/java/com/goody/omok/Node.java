@@ -22,6 +22,7 @@ public class Node {
     public float w;     // 가치 누계
     public int n;       // 시행 횟수
     public ArrayList<Node> child_nodes;
+    public static Interpreter interpreter = null;
 
     private Interpreter getTfliteInterpreter(String modelPath) {
         try {
@@ -68,14 +69,16 @@ public class Node {
         // 자녀 노드가 존재하지 않는 경우
         if(this.child_nodes.size() == 0){
 
-            Interpreter interpreter = getTfliteInterpreter("best.tflite");
+            if(interpreter == null) {
+                interpreter = getTfliteInterpreter("best.tflite");
+                interpreter.resizeInput(0,new int[]{1,15,15,2});
+                interpreter.allocateTensors();
+            }
 
             int input_tensor_num_element = interpreter.getInputTensor(0).numElements();
             int output_tensor_num_element_value = interpreter.getOutputTensor(0).numElements();
             int output_tensor_num_element_policies = interpreter.getOutputTensor(1).numElements();
 
-            interpreter.resizeInput(0,new int[]{1,15,15,2});
-            interpreter.allocateTensors();
             FloatBuffer input_buffer = FloatBuffer.allocate(input_tensor_num_element);
             input_buffer.put(state.convert_input_shape_float_buffer());
             Map map_of_indices_to_outputs = new HashMap<>();
@@ -104,7 +107,8 @@ public class Node {
 
             float sum_legal_policies = float_array_list_sum(legal_policies);
             for(int i = 0; i < legal_policies.size(); i++){
-                legal_policies.set(i,legal_policies.get(i) / sum_legal_policies);
+                float percent = legal_policies.get(i) / sum_legal_policies;
+                legal_policies.set(i,percent);
             }
 
             this.w += value;

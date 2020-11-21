@@ -8,65 +8,36 @@
     android:orientation="vertical"
     tools:context=".FullscreenActivity">
 
-    <TableLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/nanum_bold"
+            android:gravity="center"
+            android:text="이 AI는 정말 멍청합니다!"
+            android:textColor="#FF0000"
+            android:textSize="20sp" />
 
-            <Button
-                android:id="@+id/level_1_button"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/nanum_bold"
-                android:text="초보"
-                app:backgroundTint="@color/colorPrimary" />
-
-            <Button
-                android:id="@+id/level_2_button"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/nanum_bold"
-                android:text="중수"
-                app:backgroundTint="@color/colorThirdLabel" />
-
-            <Button
-                android:id="@+id/level_3_button"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:layout_weight="1"
-                android:fontFamily="@font/nanum_bold"
-                android:text="고수"
-                app:backgroundTint="@color/colorThirdLabel" />
-        </TableRow>
-
-        <TableRow
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <Button
                 android:id="@+id/turn_first_button"
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
-                android:layout_weight="1"
                 android:fontFamily="@font/nanum_bold"
                 android:text="선공"
                 app:backgroundTint="@color/colorPrimary" />
@@ -74,76 +45,72 @@
             <Button
                 android:id="@+id/turn_second_button"
                 android:layout_width="wrap_content"
+                android:layout_weight="1"
                 android:layout_height="60dp"
-                android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
-                android:layout_weight="1"
                 android:fontFamily="@font/nanum_bold"
                 android:text="후공"
                 app:backgroundTint="@color/colorThirdLabel" />
 
-        </TableRow>
+        </LinearLayout>
 
-    </TableLayout>
+        <Button
+            android:id="@+id/game_start_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/nanum_bold"
+            android:text="게임 시작"
+            app:backgroundTint="@color/colorThirdLabel" />
 
-    <Button
-        android:id="@+id/game_start_button"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="16dp"
-        android:fontFamily="@font/nanum_bold"
-        android:text="게임 시작"
-        app:backgroundTint="@color/colorThirdLabel" />
-
-    <TextView
-        android:id="@+id/game_state_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:fontFamily="@font/nanum_bold"
-        android:gravity="center"
-        android:text="게임이 시작되길 기다리는 중..."
-        android:textColor="@color/colorPrimary"
-        android:textSize="16sp" />
-
-    <FrameLayout
-        android:id="@+id/go_board_framelayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/go_board_imageview"
+        <TextView
+            android:id="@+id/game_state_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="-20dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="-20dp"
-            app:srcCompat="@drawable/go_board" />
+            android:fontFamily="@font/nanum_bold"
+            android:gravity="center"
+            android:text="게임이 시작되길 기다리는 중..."
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp" />
 
-    </FrameLayout>
+        <FrameLayout
+            android:id="@+id/go_board_framelayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/splashdown_button"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="25dp"
-        android:fontFamily="@font/nanum_bold"
-        android:text="착수"
-        app:backgroundTint="@color/colorPrimary" />
+            <ImageView
+                android:id="@+id/go_board_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="410dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                app:srcCompat="@drawable/go_board" />
 
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/splashdown_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="25dp"
+            android:fontFamily="@font/nanum_bold"
+            android:text="착수"
+            app:backgroundTint="@color/colorPrimary" />
+
+    </LinearLayout>
 </LinearLayout>
